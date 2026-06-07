@@ -234,7 +234,10 @@ function App() {
       improvements: criticism,
       strengthProfile,
       weaknessProfile,
-      sampleAnswer: sampleAnswerBank[selectedProfession]?.[0] || "",
+      sampleAnswers: (sampleAnswerBank[selectedProfession] || []).map((ans, idx) => ({
+        question: interviewQuestions[selectedProfession]?.[idx] || "",
+        answer: ans
+      })),
     });
     setLoading(false);
   };
@@ -353,8 +356,15 @@ function App() {
                 </article>
 
                 <article className="analytics-card">
-                  <h4>Expected sample answer</h4>
-                  <p className="muted-copy">{result.sampleAnswer || "A sample answer will appear here after you complete the interview."}</p>
+                  <h4>Expected Answers for a 100/100 Score</h4>
+                  <div className="expected-answers-list">
+                    {(result.sampleAnswers || []).map((item, idx) => (
+                      <div key={idx} className="expected-answer-item">
+                        <p className="expected-question"><strong>Q{idx + 1}: {item.question}</strong></p>
+                        <p className="expected-answer">{item.answer}</p>
+                      </div>
+                    ))}
+                  </div>
                 </article>
               </div>
               <div className="button-row" style={{ marginTop: 10 }}>
@@ -434,7 +444,10 @@ function App() {
                         improvements: criticism,
                         strengthProfile,
                         weaknessProfile,
-                        sampleAnswer: sampleAnswerBank[selectedProfession]?.[0] || "",
+                        sampleAnswers: (sampleAnswerBank[selectedProfession] || []).map((ans, idx) => ({
+                          question: interviewQuestions[selectedProfession]?.[idx] || "",
+                          answer: ans
+                        })),
                       });
                     }
                   }}

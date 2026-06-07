@@ -285,3 +285,30 @@ h4 { font-size: 0.95rem; color: #ccfbf1; margin-bottom: 8px; }
   .content-grid, .mini-grid, .feedback-grid, .single-column { grid-template-columns: 1fr; }
   .panel-heading, .feedback-header, .button-row { align-items: flex-start; flex-direction: column; }
 }
+
+.expected-answers-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.expected-answer-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(45, 212, 191, 0.1);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: left;
+}
+
+.expected-question {
+  color: #2dd4bf;
+  font-size: 0.95rem;
+  margin-bottom: 6px !important;
+}
+
+.expected-answer {
+  color: #ccfbf1;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0;
+}
