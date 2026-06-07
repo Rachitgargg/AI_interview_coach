@@ -246,6 +246,54 @@ Only return the JSON object, do not return any other text.`;
   return JSON.parse(text);
 }
 
+const Icons = {
+  frontend: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  ),
+  pen: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+    </svg>
+  ),
+  chart: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  ),
+  database: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon">
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M3 5V19C3 20.66 7.03 22 12 22C16.97 22 21 20.66 21 19V5" />
+      <path d="M3 12C3 13.66 7.03 15 12 15C16.97 15 21 13.66 21 12" />
+    </svg>
+  )
+};
+
+const professionDetails = {
+  "Frontend Engineer": {
+    icon: Icons.frontend,
+    description: "Web optimization, rendering paths, state machines, browser performance.",
+  },
+  "Product Designer": {
+    icon: Icons.pen,
+    description: "User flows, mockup prototyping, UX research, wireframing, design systems.",
+  },
+  "Data Analyst": {
+    icon: Icons.chart,
+    description: "KPI telemetry, dashboard reporting, SQL queries, user behavior analytics.",
+  },
+  "Backend Engineer": {
+    icon: Icons.database,
+    description: "API design, scalability, queue structures, database caching, low-latency.",
+  }
+};
+
 function App() {
   const [selectedProfession, setSelectedProfession] = useState("");
   const [hasStarted, setHasStarted] = useState(false);
@@ -339,226 +387,351 @@ function App() {
 
   if (loading) {
     return (
-      <main className="app-shell loading-shell">
-        <div className="loading-card panel">
-          <div className="spinner"></div>
-          <h2>AI Coach is analyzing your answers...</h2>
-          <p className="muted-copy">This will take a few seconds as Gemini reviews your performance and generates tailored model answers.</p>
+      <div className="dashboard-container">
+        <div className="bg-orbs">
+          <div className="orb orb-1"></div>
+          <div className="orb orb-2"></div>
+          <div className="orb orb-3"></div>
         </div>
-      </main>
+        <header className="navbar">
+          <div className="nav-container">
+            <div className="nav-brand">
+              <svg className="nav-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+              <span className="logo-text">ApexCoach</span>
+              <span className="logo-beta">Beta</span>
+            </div>
+          </div>
+        </header>
+        <main className="app-shell loading-shell">
+          <div className="loading-card panel">
+            <div className="spinner"></div>
+            <h2>AI Coach is analyzing your answers...</h2>
+            <p className="muted-copy">This will take a few seconds as Gemini reviews your performance and generates tailored model answers.</p>
+          </div>
+        </main>
+      </div>
     );
   }
 
   return (
-    <main className="app-shell">
-      <section className="hero-card panel clean-hero">
-        <div>
-          <p className="eyebrow">AI Interview Coach</p>
-          <h1>Practice interviews with a calm, professional coaching experience.</h1>
-          <p className="lede">
-            Select a role, answer four focused questions, and receive a clear final review tailored to your professional profile.
-          </p>
+    <div className="dashboard-container">
+      <div className="bg-orbs">
+        <div className="orb orb-1"></div>
+        <div className="orb orb-2"></div>
+        <div className="orb orb-3"></div>
+      </div>
+
+      <header className="navbar">
+        <div className="nav-container">
+          <div className="nav-brand">
+            <svg className="nav-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span className="logo-text">ApexCoach</span>
+            <span className="logo-beta">Beta</span>
+          </div>
+          <nav className="nav-links">
+            <a href="#" className="active">Mock Prep</a>
+            <a href="#">Question Bank</a>
+            <a href="#">History</a>
+            <a href="#">System Settings</a>
+          </nav>
+          <div className="nav-actions">
+            <span className="user-indicator">
+              <span className="dot online"></span>
+              Rachit
+            </span>
+          </div>
         </div>
-      </section>
+      </header>
 
-      <section className="content-grid single-column">
-        <article className="panel left-panel clean-start-card">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Start here</p>
-              <h2>Choose your profession</h2>
-            </div>
-            <span className="pill">Clean mode</span>
+      <main className="app-shell">
+        <section className="hero-card panel clean-hero">
+          <div>
+            <p className="eyebrow">Interactive Engine</p>
+            <h1>Elevate your mock prep with a premium AI coach.</h1>
+            <p className="lede">
+              Select a specialized track, answer four focused core questions, and receive deep analytical grading powered by Gemini AI.
+            </p>
           </div>
+        </section>
 
-          <div className="start-card-stack">
-            <label className="field-label" htmlFor="profession">Profession</label>
-            <select
-              id="profession"
-              className="answer-box select-box"
-              value={selectedProfession}
-            onChange={(e) => {
-              setSelectedProfession(e.target.value);
-              setHasStarted(false);
-              setCurrentQuestionIndex(0);
-              setCurrentAnswer("");
-              setAnswers([]);
-              setResult(null);
-              setShowSampleAnswer(false);
-            }}
-          >
-            <option value="">Select a profession</option>
-              {professionOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            type="button"
-            className="primary-btn start-btn"
-            onClick={startSession}
-            disabled={!selectedProfession}
-          >
-            Start interview
-          </button>
-        </article>
-
-        <article className="panel right-panel clean-session-card">
-          {!selectedProfession ? (
-            <div className="empty-state">
-              <p className="eyebrow">Ready</p>
-              <h2>Select a profession to begin your interview session.</h2>
-              <p className="muted-copy">The coach will ask four focused questions, one at a time, and then give you a final score and criticism.</p>
+        <section className="content-grid single-column">
+          <article className="panel left-panel clean-start-card">
+            <div className="panel-heading-vertical">
+              <p className="eyebrow">Configuration</p>
+              <h2>Select your track</h2>
+              <p className="panel-subtitle-copy">Choose your profession to load customized interview modules.</p>
             </div>
-          ) : !hasStarted ? (
-            <div className="empty-state">
-              <p className="eyebrow">Session ready</p>
-              <h2>You selected {selectedProfession}.</h2>
-              <p className="muted-copy">Press start to begin the four-question interview and receive your final review afterward.</p>
-              <button type="button" className="primary-btn" onClick={startSession}>Start interview</button>
+
+            <div className="profession-grid">
+              {professionOptions.map((option) => {
+                const details = professionDetails[option] || { icon: Icons.frontend, description: "" };
+                const isActive = selectedProfession === option;
+                return (
+                  <button
+                    type="button"
+                    key={option}
+                    className={`profession-card-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedProfession(option);
+                      setHasStarted(false);
+                      setCurrentQuestionIndex(0);
+                      setCurrentAnswer("");
+                      setAnswers([]);
+                      setResult(null);
+                      setShowSampleAnswer(false);
+                    }}
+                  >
+                    <div className="prof-card-icon-wrapper">{details.icon}</div>
+                    <div className="prof-card-text">
+                      <span className="prof-card-title">{option}</span>
+                      <span className="prof-card-desc">{details.description}</span>
+                    </div>
+                    {isActive && <div className="prof-card-active-dot"></div>}
+                  </button>
+                );
+              })}
             </div>
-          ) : result ? (
-            <section className="feedback-card">
-              <div className="feedback-header">
-                <div>
-                  <div className="badge-row">
-                    <p className="eyebrow">Final review</p>
-                    <span className={`engine-badge ${result.isAI ? 'ai-badge' : 'local-badge'}`}>
-                      {result.isAI ? 'Gemini AI Graded' : 'Local Rules Graded'}
-                    </span>
+
+            <button
+              type="button"
+              className="primary-btn start-btn-glow"
+              onClick={startSession}
+              disabled={!selectedProfession}
+            >
+              <span>Start Practice Session</span>
+              <svg className="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </article>
+
+          <article className="panel right-panel clean-session-card">
+            {!selectedProfession ? (
+              <div className="right-panel-preview">
+                <div className="preview-grid-wrapper">
+                  <div className="preview-header">
+                    <p className="eyebrow">Apex Assessment Engine</p>
+                    <h2>Session Focus Areas</h2>
+                    <p className="muted-copy">Complete a session to get measured across four core dimensions evaluated by elite tech teams.</p>
                   </div>
-                  <h3>{selectedProfession} interview summary</h3>
-                </div>
-                <span className={`score-pill ${scoreTone}`}>{result.score}/100</span>
-              </div>
-              {result.errorMsg && (
-                <div className="api-error-banner">
-                  <span>⚠️ AI grading failed ({result.errorMsg}). Fell back to offline rules.</span>
-                </div>
-              )}
-              <p className="summary-copy">{result.summary}</p>
-              <div className="feedback-grid">
-                <article>
-                  <h4>What went well</h4>
-                  <ul>{result.strengths.map((item) => <li key={item}>{item}</li>)}</ul>
-                </article>
-                <article>
-                  <h4>Criticism</h4>
-                  <ul>{result.improvements.map((item) => <li key={item}>{item}</li>)}</ul>
-                </article>
-              </div>
-
-              <div className="analytics-grid">
-                <article className="analytics-card">
-                  <h4>Your strength profile</h4>
-                  {(result.strengthProfile || []).map((item) => (
-                    <div className="bar-row" key={item.label}>
-                      <span>{item.label}</span>
-                      <div className="bar-track"><span className="bar-fill bar-good" style={{ width: `${item.width}%` }} /></div>
-                      <strong>{item.count}x</strong>
+                  <div className="preview-cards-grid">
+                    <div className="preview-card">
+                      <div className="preview-card-icon text-teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                      </div>
+                      <h3>Behavioral Fit</h3>
+                      <p>Structured checks for story pacing, context framing, and communication style.</p>
                     </div>
-                  ))}
-                </article>
-
-                <article className="analytics-card">
-                  <h4>Your weakness profile</h4>
-                  {(result.weaknessProfile || []).map((item) => (
-                    <div className="bar-row" key={item.label}>
-                      <span>{item.label}</span>
-                      <div className="bar-track"><span className="bar-fill bar-weak" style={{ width: `${item.width}%` }} /></div>
-                      <strong>{item.count}x</strong>
+                    <div className="preview-card">
+                      <div className="preview-card-icon text-emerald">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="16 18 22 12 16 6"></polyline>
+                          <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                      </div>
+                      <h3>Technical Specifics</h3>
+                      <p>Evaluates domain vocabulary, terminology, and modern concepts for your specific role.</p>
                     </div>
-                  ))}
-                </article>
+                    <div className="preview-card">
+                      <div className="preview-card-icon text-cyan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                          <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                        </svg>
+                      </div>
+                      <h3>Impact & Telemetry</h3>
+                      <p>Validates key metrics, business outcomes, and quantifiable data in your answers.</p>
+                    </div>
+                    <div className="preview-card">
+                      <div className="preview-card-icon text-purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                      </div>
+                      <h3>Generative AI Grading</h3>
+                      <p>Leverages Gemini 2.5 Flash to provide score summaries and model answers.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : !hasStarted ? (
+              <div className="empty-state track-ready-state">
+                <div className="empty-state-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                </div>
+                <p className="eyebrow">Session configured</p>
+                <h2>Ready to practice: {selectedProfession}</h2>
+                <p className="muted-copy">
+                  We've loaded 4 customized questions. Start the session to begin answering under mock conditions.
+                </p>
+                <button type="button" className="primary-btn start-btn-glow" onClick={startSession}>
+                  Start Mock Session
+                </button>
+              </div>
+            ) : result ? (
+              <section className="feedback-card">
+                <div className="feedback-header">
+                  <div>
+                    <div className="badge-row">
+                      <p className="eyebrow">Final review</p>
+                      <span className={`engine-badge ${result.isAI ? 'ai-badge' : 'local-badge'}`}>
+                        {result.isAI ? 'Gemini AI Graded' : 'Local Rules Graded'}
+                      </span>
+                    </div>
+                    <h3>{selectedProfession} interview summary</h3>
+                  </div>
+                  <span className={`score-pill ${scoreTone}`}>{result.score}/100</span>
+                </div>
+                {result.errorMsg && (
+                  <div className="api-error-banner">
+                    <span>⚠️ AI grading failed ({result.errorMsg}). Fell back to offline rules.</span>
+                  </div>
+                )}
+                <p className="summary-copy">{result.summary}</p>
+                <div className="feedback-grid">
+                  <article>
+                    <h4>What went well</h4>
+                    <ul>{result.strengths.map((item) => <li key={item}>{item}</li>)}</ul>
+                  </article>
+                  <article>
+                    <h4>Criticism</h4>
+                    <ul>{result.improvements.map((item) => <li key={item}>{item}</li>)}</ul>
+                  </article>
+                </div>
 
-                <article className="analytics-card">
-                  <h4>Expected Answers for a 100/100 Score</h4>
-                  <div className="expected-answers-list">
-                    {(result.sampleAnswers || []).map((item, idx) => (
-                      <div key={idx} className="expected-answer-item">
-                        <p className="expected-question"><strong>Q{idx + 1}: {item.question}</strong></p>
-                        <p className="expected-answer">{item.answer}</p>
+                <div className="analytics-grid">
+                  <article className="analytics-card">
+                    <h4>Your strength profile</h4>
+                    {(result.strengthProfile || []).map((item) => (
+                      <div className="bar-row" key={item.label}>
+                        <span>{item.label}</span>
+                        <div className="bar-track"><span className="bar-fill bar-good" style={{ width: `${item.width}%` }} /></div>
+                        <strong>{item.count}x</strong>
                       </div>
                     ))}
+                  </article>
+
+                  <article className="analytics-card">
+                    <h4>Your weakness profile</h4>
+                    {(result.weaknessProfile || []).map((item) => (
+                      <div className="bar-row" key={item.label}>
+                        <span>{item.label}</span>
+                        <div className="bar-track"><span className="bar-fill bar-weak" style={{ width: `${item.width}%` }} /></div>
+                        <strong>{item.count}x</strong>
+                      </div>
+                    ))}
+                  </article>
+
+                  <article className="analytics-card">
+                    <h4>Expected Answers for a 100/100 Score</h4>
+                    <div className="expected-answers-list">
+                      {(result.sampleAnswers || []).map((item, idx) => (
+                        <div key={idx} className="expected-answer-item">
+                          <p className="expected-question"><strong>Q{idx + 1}: {item.question}</strong></p>
+                          <p className="expected-answer">{item.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                </div>
+                <div className="button-row" style={{ marginTop: 24 }}>
+                  <button
+                    type="button"
+                    className="ghost-btn"
+                    onClick={() => {
+                      setSelectedProfession("");
+                      setCurrentQuestionIndex(0);
+                      setCurrentAnswer("");
+                      setAnswers([]);
+                      setResult(null);
+                      setShowSampleAnswer(false);
+                    }}
+                  >
+                    Choose another profession
+                  </button>
+                </div>
+              </section>
+            ) : (
+              <>
+                <div className="panel-heading">
+                  <div>
+                    <p className="eyebrow">Live interviewer</p>
+                    <h2>{selectedProfession}</h2>
                   </div>
-                </article>
-              </div>
-              <div className="button-row" style={{ marginTop: 10 }}>
-                <button
-                  type="button"
-                  className="ghost-btn"
-                  onClick={() => {
-                    setSelectedProfession("");
-                    setCurrentQuestionIndex(0);
-                    setCurrentAnswer("");
-                    setAnswers([]);
-                    setResult(null);
-                    setShowSampleAnswer(false);
-                  }}
-                >
-                  Choose another profession
-                </button>
-              </div>
-            </section>
-          ) : (
-            <>
-              <div className="panel-heading">
-                <div>
-                  <p className="eyebrow">Live interviewer</p>
-                  <h2>{selectedProfession}</h2>
+                  <span className="pill">Q {currentQuestionIndex + 1} / 4</span>
                 </div>
-                <span className="pill">Q {currentQuestionIndex + 1} / 4</span>
-              </div>
 
-              <div className="progress-card">
-                <div className="progress-copy">
-                  <strong>Progress tracker</strong>
-                  <span>{completedCount} done · {remainingCount} left</span>
+                <div className="stepper-card">
+                  <div className="stepper-progress-info">
+                    <strong>Progress tracker</strong>
+                    <span>{completedCount} done · {remainingCount} left</span>
+                  </div>
+                  <div className="stepper">
+                    {[0, 1, 2, 3].map((idx) => {
+                      const isActive = idx === currentQuestionIndex;
+                      const isCompleted = idx < currentQuestionIndex;
+                      return (
+                        <div key={idx} className={`step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}>
+                          <div className="step-circle">{isCompleted ? "✓" : idx + 1}</div>
+                          <span className="step-label">Q{idx + 1}</span>
+                          {idx < 3 && <div className="step-connector"></div>}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="progress-track"><span style={{ width: `${progressValue}%` }} /></div>
-              </div>
 
-              <p className="prompt-box">{currentQuestion}</p>
+                <p className="prompt-box">{currentQuestion}</p>
 
-              <label className="field-label" htmlFor="answer">Your answer</label>
-              <textarea
-                id="answer"
-                className="answer-box"
-                value={currentAnswer}
-                onChange={(e) => setCurrentAnswer(e.target.value)}
-                placeholder="Answer as if you are speaking in a real interview."
-              />
+                <label className="field-label" htmlFor="answer">Your answer</label>
+                <textarea
+                  id="answer"
+                  className="answer-box"
+                  value={currentAnswer}
+                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  placeholder="Answer as if you are speaking in a real interview."
+                />
 
-              <div className="button-row">
-                <button
-                  type="button"
-                  className="primary-btn"
-                  onClick={submitAnswer}
-                  disabled={!currentAnswer.trim()}
-                >
-                  {currentQuestionIndex === interviewQuestions[selectedProfession].length - 1 ? "Finish interview" : "Next question"}
-                </button>
-                <button
-                  type="button"
-                  className="ghost-btn"
-                  onClick={() => {
-                    setHasStarted(false);
-                    setCurrentAnswer("");
-                    setAnswers([]);
-                    setCurrentQuestionIndex(0);
-                    setResult(null);
-                    setShowSampleAnswer(false);
-                  }}
-                >
-                  Restart
-                </button>
-              </div>
-            </>
-          )}
-        </article>
-      </section>
-    </main>
+                <div className="button-row">
+                  <button
+                    type="button"
+                    className="primary-btn"
+                    onClick={submitAnswer}
+                    disabled={!currentAnswer.trim()}
+                  >
+                    {currentQuestionIndex === interviewQuestions[selectedProfession].length - 1 ? "Finish interview" : "Next question"}
+                  </button>
+                  <button
+                    type="button"
+                    className="ghost-btn"
+                    onClick={() => {
+                      setHasStarted(false);
+                      setCurrentAnswer("");
+                      setAnswers([]);
+                      setCurrentQuestionIndex(0);
+                      setResult(null);
+                      setShowSampleAnswer(false);
+                    }}
+                  >
+                    Restart
+                  </button>
+                </div>
+              </>
+            )}
+          </article>
+        </section>
+      </main>
+    </div>
   );
 }
 
