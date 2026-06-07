@@ -312,3 +312,74 @@ h4 { font-size: 0.95rem; color: #ccfbf1; margin-bottom: 8px; }
   line-height: 1.5;
   margin: 0;
 }
+
+.loading-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.loading-card {
+  padding: 48px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(45, 212, 191, 0.1);
+  border-left-color: #2dd4bf;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.engine-badge {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+}
+
+.ai-badge {
+  background: rgba(45, 212, 191, 0.1);
+  color: #2dd4bf;
+  border: 1px solid rgba(45, 212, 191, 0.2);
+}
+
+.local-badge {
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.api-error-banner {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 12px 0;
+  font-size: 0.85rem;
+  text-align: left;
+}

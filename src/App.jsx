@@ -167,6 +167,85 @@ function gradeDemoAnswer(answer, question) {
   };
 }
 
+async function gradeAnswersWithGemini(selectedProfession, questions, answers) {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("API_KEY_MISSING");
+  }
+
+  const prompt = `You are a professional, friendly, and expert AI Interview Coach.
+Grade the candidate's answers for a mock interview for the role: "${selectedProfession}".
+
+Here are the questions and the candidate's responses:
+${questions.map((q, idx) => `
+Question ${idx + 1}: ${q}
+Candidate's Answer: ${answers[idx]?.answer || ""}
+`).join('\n')}
+
+Analyze their responses and evaluate their performance.
+Return a structured JSON object with the exact fields below.
+
+JSON Schema:
+{
+  "score": number (between 45 and 98, representing average interview score),
+  "summary": string (brief, encouraging yet critical overall assessment of their interview),
+  "strengths": [string] (list of 3-4 specific strengths demonstrated across the answers),
+  "improvements": [string] (list of 3-4 constructive action points for improvement),
+  "strengthProfile": [
+    {
+      "label": string (a short 1-2 word tag like "Metrics", "Structure", "Concrete Examples"),
+      "count": number (number of times they displayed this strength, between 1 and 4),
+      "width": number (percentage width for progress bar, between 25 and 100)
+    }
+  ],
+  "weaknessProfile": [
+    {
+      "label": string (a short 1-2 word tag like "Lacks Metrics", "Vague Examples", "No Impact"),
+      "count": number (number of times they showed this weakness, between 1 and 4),
+      "width": number (percentage width for progress bar, between 25 and 100)
+    }
+  ],
+  "sampleAnswers": [
+    {
+      "question": string (the question text),
+      "answer": string (a perfect 100/100 model answer that the candidate could have given for this question, showing specific examples and metrics)
+    }
+  ]
+}
+
+Only return the JSON object, do not return any other text.`;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{ text: prompt }]
+      }],
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
+    })
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) {
+    throw new Error("No response text from Gemini");
+  }
+
+  return JSON.parse(text);
+}
+
 function App() {
   const [selectedProfession, setSelectedProfession] = useState("");
   const [hasStarted, setHasStarted] = useState(false);
@@ -199,7 +278,7 @@ function App() {
     setShowSampleAnswer(false);
   };
 
-  const submitAnswer = () => {
+  const submitAnswer = async () => {
     if (!currentAnswer.trim()) return;
 
     const nextAnswers = [...answers, { answer: currentAnswer.trim(), role: selectedProfession }];
@@ -212,35 +291,63 @@ function App() {
       return;
     }
 
-    const scoredAnswers = nextAnswers.map((entry, index) => gradeDemoAnswer(entry.answer, { role: entry.role, index }));
-    const averageScore = Math.round(scoredAnswers.reduce((sum, item) => sum + item.score, 0) / scoredAnswers.length);
-    const criticism = [
-      ...new Set(scoredAnswers.flatMap((item) => item.improvements).slice(0, 4)),
-    ];
-    const strengthProfile = Object.entries(scoredAnswers.flatMap((item) => item.strengthTags).reduce((acc, tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
-      return acc;
-    }, {})).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([label, count]) => ({ label, count, width: Math.max(18, Math.round((count / scoredAnswers.length) * 100)) }));
-    const weaknessProfile = Object.entries(scoredAnswers.flatMap((item) => item.weaknessTags).reduce((acc, tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
-      return acc;
-    }, {})).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([label, count]) => ({ label, count, width: Math.max(18, Math.round((count / scoredAnswers.length) * 100)) }));
-
     setAnswers(nextAnswers);
-    setResult({
-      score: averageScore,
-      summary: `You completed 4 questions for ${selectedProfession}. Your average score reflects how clearly you explained your experience, used evidence, and framed outcomes.`,
-      strengths: scoredAnswers.flatMap((item) => item.strengths).slice(0, 4),
-      improvements: criticism,
-      strengthProfile,
-      weaknessProfile,
-      sampleAnswers: (sampleAnswerBank[selectedProfession] || []).map((ans, idx) => ({
-        question: interviewQuestions[selectedProfession]?.[idx] || "",
-        answer: ans
-      })),
-    });
-    setLoading(false);
+    setLoading(true);
+
+    try {
+      const questions = interviewQuestions[selectedProfession];
+      const aiResult = await gradeAnswersWithGemini(selectedProfession, questions, nextAnswers);
+      setResult({
+        ...aiResult,
+        isAI: true,
+      });
+    } catch (error) {
+      console.error("Gemini grading failed, falling back to local grading:", error);
+      
+      const scoredAnswers = nextAnswers.map((entry, index) => gradeDemoAnswer(entry.answer, { role: entry.role, index }));
+      const averageScore = Math.round(scoredAnswers.reduce((sum, item) => sum + item.score, 0) / scoredAnswers.length);
+      const criticism = [
+        ...new Set(scoredAnswers.flatMap((item) => item.improvements).slice(0, 4)),
+      ];
+      const strengthProfile = Object.entries(scoredAnswers.flatMap((item) => item.strengthTags).reduce((acc, tag) => {
+        acc[tag] = (acc[tag] || 0) + 1;
+        return acc;
+      }, {})).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([label, count]) => ({ label, count, width: Math.max(18, Math.round((count / scoredAnswers.length) * 100)) }));
+      const weaknessProfile = Object.entries(scoredAnswers.flatMap((item) => item.weaknessTags).reduce((acc, tag) => {
+        acc[tag] = (acc[tag] || 0) + 1;
+        return acc;
+      }, {})).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([label, count]) => ({ label, count, width: Math.max(18, Math.round((count / scoredAnswers.length) * 100)) }));
+
+      setResult({
+        score: averageScore,
+        summary: `You completed 4 questions for ${selectedProfession}. Your average score reflects how clearly you explained your experience, used evidence, and framed outcomes.`,
+        strengths: scoredAnswers.flatMap((item) => item.strengths).slice(0, 4),
+        improvements: criticism,
+        strengthProfile,
+        weaknessProfile,
+        sampleAnswers: (sampleAnswerBank[selectedProfession] || []).map((ans, idx) => ({
+          question: interviewQuestions[selectedProfession]?.[idx] || "",
+          answer: ans
+        })),
+        isAI: false,
+        errorMsg: error.message === "API_KEY_MISSING" ? "API key not found" : "API request failed",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <main className="app-shell loading-shell">
+        <div className="loading-card panel">
+          <div className="spinner"></div>
+          <h2>AI Coach is analyzing your answers...</h2>
+          <p className="muted-copy">This will take a few seconds as Gemini reviews your performance and generates tailored model answers.</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="app-shell">
@@ -315,11 +422,21 @@ function App() {
             <section className="feedback-card">
               <div className="feedback-header">
                 <div>
-                  <p className="eyebrow">Final review</p>
+                  <div className="badge-row">
+                    <p className="eyebrow">Final review</p>
+                    <span className={`engine-badge ${result.isAI ? 'ai-badge' : 'local-badge'}`}>
+                      {result.isAI ? 'Gemini AI Graded' : 'Local Rules Graded'}
+                    </span>
+                  </div>
                   <h3>{selectedProfession} interview summary</h3>
                 </div>
                 <span className={`score-pill ${scoreTone}`}>{result.score}/100</span>
               </div>
+              {result.errorMsg && (
+                <div className="api-error-banner">
+                  <span>⚠️ AI grading failed ({result.errorMsg}). Fell back to offline rules.</span>
+                </div>
+              )}
               <p className="summary-copy">{result.summary}</p>
               <div className="feedback-grid">
                 <article>
@@ -417,40 +534,7 @@ function App() {
                 <button
                   type="button"
                   className="primary-btn"
-                  onClick={() => {
-                    if (!currentAnswer.trim()) return;
-                    const nextAnswers = [...answers, { answer: currentAnswer.trim(), role: selectedProfession }];
-                    const nextIndex = currentQuestionIndex + 1;
-                    if (nextIndex < interviewQuestions[selectedProfession].length) {
-                      setAnswers(nextAnswers);
-                      setCurrentAnswer("");
-                      setCurrentQuestionIndex(nextIndex);
-                    } else {
-                      const scoredAnswers = nextAnswers.map((entry, index) => gradeDemoAnswer(entry.answer, { role: entry.role, index }));
-                      const averageScore = Math.round(scoredAnswers.reduce((sum, item) => sum + item.score, 0) / scoredAnswers.length);
-                      const criticism = [...new Set(scoredAnswers.flatMap((item) => item.improvements).slice(0, 4))];
-                      const strengthProfile = Object.entries(scoredAnswers.flatMap((item) => item.strengthTags).reduce((acc, tag) => {
-                        acc[tag] = (acc[tag] || 0) + 1;
-                        return acc;
-                      }, {})).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([label, count]) => ({ label, count, width: Math.max(18, Math.round((count / scoredAnswers.length) * 100)) }));
-                      const weaknessProfile = Object.entries(scoredAnswers.flatMap((item) => item.weaknessTags).reduce((acc, tag) => {
-                        acc[tag] = (acc[tag] || 0) + 1;
-                        return acc;
-                      }, {})).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([label, count]) => ({ label, count, width: Math.max(18, Math.round((count / scoredAnswers.length) * 100)) }));
-                      setResult({
-                        score: averageScore,
-                        summary: `You completed 4 questions for ${selectedProfession}. Your average score reflects clarity, evidence, structure, and business relevance.`,
-                        strengths: scoredAnswers.flatMap((item) => item.strengths).slice(0, 4),
-                        improvements: criticism,
-                        strengthProfile,
-                        weaknessProfile,
-                        sampleAnswers: (sampleAnswerBank[selectedProfession] || []).map((ans, idx) => ({
-                          question: interviewQuestions[selectedProfession]?.[idx] || "",
-                          answer: ans
-                        })),
-                      });
-                    }
-                  }}
+                  onClick={submitAnswer}
                   disabled={!currentAnswer.trim()}
                 >
                   {currentQuestionIndex === interviewQuestions[selectedProfession].length - 1 ? "Finish interview" : "Next question"}
