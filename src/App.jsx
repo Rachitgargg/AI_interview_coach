@@ -432,12 +432,7 @@ function App() {
             <span className="logo-text">ApexCoach</span>
             <span className="logo-beta">Beta</span>
           </div>
-          <nav className="nav-links">
-            <a href="#" className="active">Mock Prep</a>
-            <a href="#">Question Bank</a>
-            <a href="#">History</a>
-            <a href="#">System Settings</a>
-          </nav>
+
           <div className="nav-actions">
             <span className="user-indicator">
               <span className="dot online"></span>
